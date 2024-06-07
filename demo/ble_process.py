@@ -6,6 +6,7 @@ from signal import SIGINT, SIGTERM, signal
 import dbus
 import dbus.exceptions
 import dbus.mainloop.glib
+from dbus.mainloop.glib import DBusGMainLoop
 import dbus.service
 from gi.repository import GLib
 
@@ -16,9 +17,11 @@ from demo.core_ble.service import Service
 from demo.exceptions import BluetoothNotFoundException
 from demo.util import find_adapter
 
+language = "spanish"
 
-def register_app_cb():
+def register_app_cb(v=None):
     print("Bluetooth service registered")
+
 
 
 def register_app_error_cb(error):
@@ -47,6 +50,7 @@ class BLEProcess(Process):
 
         # The mainloop initialized here handles the asynchronous communication over dbus documentation can be found
         # here: https://docs.gtk.org/glib/main-loop.html
+        DBusGMainLoop(set_as_default=True)
         self._mainloop = GLib.MainLoop()
 
         # register shutdown handler
@@ -70,7 +74,7 @@ class BLEProcess(Process):
             index=0,
             adapter_obj=adapter_obj,
             uuid="0000180d-aaaa-1000-8000-0081239b35fb",
-            name="pycon_demo_service",
+            name="revdemoservice",
         )
 
         # Create the application and add the service to it
@@ -78,14 +82,26 @@ class BLEProcess(Process):
 
         example_service = Service(
             bus=self._system_bus,
-            index=0,
-            uuid="0000180d-aaaa-1000-8000-0081239b35fb",
+            index=1,
+            uuid="0000180d-aaaa-1000-8000-0081239b35fc",
             primary=True,
             output_queue=self._output_queue,
         )
 
         example_service.add_characteristic(
-            "f76ce015-952b-c6a8-e17c-c2c19aac7b1b", ["read", "write"], "Test Characteristic", "Hello PyConDE"
+            "f76ce015-952b-c6a8-e17c-c2c19aac7b1b", ["read", "write"], "Language", "Spanish"
+        )
+
+        example_service.add_characteristic(
+            "aec7fba8-24cf-11ef-a164-f7472c9c63ea", ["read", "write"], "SSID", "Rev Member"
+        )
+
+        example_service.add_characteristic(
+            "c8c51d2e-24cf-11ef-9434-7b8d949480af", ["write"], "Password", "incubator"
+        )
+
+        example_service.add_characteristic(
+            "f863217a-24cf-11ef-821e-7732ec12df3b", ["read"], "Status", "idk"
         )
 
         app.add_service(example_service)

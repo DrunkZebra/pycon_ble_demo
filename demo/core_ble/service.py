@@ -109,10 +109,14 @@ class Service(dbus.service.Object):
             List[Characteristic]: The characteristics of the service.
         """
         return self.characteristics
+    
+    def add_signal_receiver(self):
+        'should repond to an incoming read?'
+        return bytearray("huh?")
 
     @dbus.service.method(DBUS_PROP_IFACE, in_signature="s", out_signature="a{sv}")
     def GetAll(self, interface) -> Dict[str, Any]:
-        """
+        """DBusGMainLoop(set_as_default=True)
         Returns all the properties of the service.
 
         Args:

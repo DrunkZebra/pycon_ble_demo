@@ -97,7 +97,6 @@ class Advertisement(dbus.service.Object):
             properties["IncludeTxPower"] = dbus.Boolean(self.include_tx_power)
         if self.data is not None:
             properties["Data"] = dbus.Dictionary(self.data, signature="yv")
-
         return {LE_ADVERTISEMENT_IFACE: properties}
 
     def get_path(self) -> dbus.ObjectPath:
